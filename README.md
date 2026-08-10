@@ -84,34 +84,26 @@ npm run dev
 Abra o seu navegador web e acesse o endereço local:
 👉 http://localhost:3000
 
-## Requisitos Funcionais
-Referem-se às funcionalidades que o sistema deve executar.
+## Relação de tecnologias, frameworks e bibliotecas principais adotadas.
 
-- RF01 - O sistema deve disponibilizar uma API REST para gerenciamento de anúncios.
-- RF02 - A API deve permitir criar anúncios.
-- RF03 - A API deve permitir listar anúncios.
-- RF04 - A API deve permitir filtrar anúncios.
-- RF05 - A API deve permitir excluir anúncios.
-- RF06 - O sistema deve persistir os dados dos anúncios durante a execução da aplicação.
-- RF07 - A API deve receber e retornar dados no formato JSON.
-- RF08 - O sistema deve permitir autenticação de usuários (bônus).
-- RF09 - O sistema deve validar os campos obrigatórios das requisições (bônus).
-- RF10 - O sistema deve tratar erros de forma adequada, retornando respostas apropriadas (bônus).
-- RF11 - O sistema deve disponibilizar uma interface web para interação com a API.
-- RF12 - O sistema deve permitir a instalação da aplicação como PWA.
-- RF13 - O sistema deve adaptar sua interface para dispositivos móveis (responsividade).
-- RF14 - O sistema deve permitir a visualização offline de dados previamente carregados (bônus).
+ * Integração com Supabase: Conectamos o banco PostgreSQL (tabelas profiles, categoria, produto e imagem_produto) às rotas da API em Next.js para busca, cadastro e remoção de anúncios.
+ * Interface e Estilização: Definimos o texto em preto para melhor legibilidade e criamos os cards de produto na tela inicial exibindo imagem, nome e preço com atalho para a página de detalhes.
+ * Busca e Categorias: Limitamos o filtro às 5 categorias oficiais (Eletrônicos, Papelaria, Masculino Vestimenta, Feminino Vestimento e Acessórios), com suporte para agrupamento por seções e filtragem estrita.
+ * Modais e Autenticação: Implementamos janelas em formato pop-up para Login/Cadastro (com validação do e-mail @edu.unifor.br e senha de 8+ dígitos) e para criação de anúncios (com opção de preço ou doação gratuita).
+ * Estrutura do Projeto: Unificamos o Navbar.jsx, corrigimos conflitos de rotas do App Router e criamos uma camada de persistência local (storage.js) para funcionamento sem dependência de APIs externas.
+ * Documentação: Disponibilizamos o passo a passo de instalação do ambiente (Node.js, Git, dependências) e o arquivo README.md pronto para o repositório, além da explicação técnica da arquitetura do sistema.
 
-## Requisitos Não Funcionais
-Referem-se às características técnicas e de qualidade do sistema.
+ ## Diário de Bordo da IA
+ * Ferramentas Utilizadas: 
+ - ChatGPT
+ - Gemini
 
-- RNF01 - O backend deve ser desenvolvido utilizando uma linguagem ou framework compatível com APIs REST (Node.js, FastAPI, Java Spring Boot, C#, etc.).
-- RNF02 - O frontend deve ser desenvolvido utilizando tecnologias web modernas (React, Vue.js, Angular ou HTML/CSS/JavaScript).
-- RNF03 - O sistema deve utilizar um mecanismo de persistência de dados (SQLite, banco em memória ou banco de dados).
-- RNF04 - A comunicação entre cliente e servidor deve utilizar exclusivamente o formato JSON.
-- RNF05 - A aplicação deve possuir um arquivo manifest.json válido para PWA.
-- RNF06 - A aplicação deve possuir um Service Worker básico.
-- RNF07 - A interface deve ser totalmente responsiva para desktop e dispositivos móveis.
-- RNF08 - O sistema pode utilizar um banco de dados relacional ou não relacional em container ou na nuvem (ex.: PostgreSQL ou MongoDB) como diferencial.
-- RNF09 - O frontend pode ser desenvolvido utilizando TypeScript como diferencial.
-- RNF10 - A interface deve apresentar componentes visuais modernos, feedback de carregamento e transições suaves.
+ * Estratégia de Engenharia de Prompts e Histórico:
+ - https://share.gemini.google/CAEqjKbzsacj
+ - https://chatgpt.com/share/6a7a635e-0bb0-83e9-9eb1-34cc60c8d970
+ - https://chatgpt.com/share/6a7a6371-70e4-83e9-be68-f0e30a974f93
+ - https://chatgpt.com/share/6a7a638f-049c-83e9-ae43-1da57c7baf62
+ 
+ * Reflexão Crítica:
+ - "Houve momentos em que o erro era indicado em outra pasta, para evitar erros ou enganos eu compartilhava o codigo na ferramenta"
+ - "Eu estava evitando usar qualquer tipo de I.A. mas fiquei com a aplicação cheia de erros, me deixando nervoso e ansioso, então decidir usar pra tirar algumas dúvidas como: Conectar o Supabase"
