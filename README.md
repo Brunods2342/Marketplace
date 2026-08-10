@@ -19,9 +19,70 @@ Uma Landing Page de apresentação que explica a proposta do projeto, exibe esta
 ### Versão Mobile (PWA Instalável): 
 Uma experiência fluida que se comporta como um aplicativo nativo no celular, permitindo que alunos autenticados publiquem anúncios (com foto, preço ou tag de doação) e gerenciem seus próprios itens cadastrados.
 
+---
+
 ## Instruções 
-## Usuarios do Sistema
-- Alunos
+### Passo a passo de como rodar a aplicação, Backend e Frontend, localmente (Pré-requisitos, comandos de instalação de dependências e comandos de execução).
+
+## 🛠️ Pré-requisitos
+
+Antes de iniciar, certifique-se de instalar as ferramentas necessárias de acordo com o seu sistema operacional.
+
+### 1. Node.js e NPM
+O Node.js (versão LTS recomendada) é necessário para executar a aplicação e o `npm` gerencia os pacotes.
+
+* **Windows:**
+  1. Baixe o instalador `.msi` (LTS) em [nodejs.org](https://nodejs.org/).
+  2. Execute o instalador, avance as etapas e marque a opção **"Add to PATH"**.
+  3. Reinicie o computador.
+* **Linux (Ubuntu/Debian):**
+
+```bash
+sudo apt update
+sudo apt install -y nodejs npm
+```
+### Verificação: No terminal/CMD, confirme a instalação executando:
+
+```bash
+node -v
+npm -v
+```
+### 2. Git
+
+Utilizado para clonar e versionar o repositório do projeto.
+Windows: Baixe e instale pelo site git-scm.com.
+Linux: Execute sudo apt install git.
+macOS: Execute brew install git.
+#### Verificação: No terminal, confirme com:
+```bash
+git --version
+```
+## 🚀 Passo a Passo para Execução Local
+### 1. Clonar o Repositório
+Abra o terminal no diretório onde deseja armazenar o projeto e execute:
+```bash
+git clone <URL_DO_REPOSITORIO>
+cd marketplace
+```
+### 2. Instalar as Dependências
+Instale todas as bibliotecas e pacotes declarados no projeto (Next.js, React, Tailwind CSS, Supabase):
+```bash
+npm install
+```
+### 3. Configurar Variáveis de Ambiente (.env.local)
+Crie um arquivo chamado .env.local na raiz do projeto e adicione suas credenciais do banco de dados (se aplicável):
+```Snippet de código
+NEXT_PUBLIC_SUPABASE_URL=[https://seu-projeto.supabase.co](https://seu-projeto.supabase.co)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-chave-anonima-aqui
+```
+### 4. Rodar a Aplicação (Frontend + Backend API)
+Como o Next.js (App Router) executa o frontend e as rotas de API do backend no mesmo processo, basta rodar o servidor de desenvolvimento:
+```bash
+npm run dev
+```
+### 5. Acessar o Projeto
+Abra o seu navegador web e acesse o endereço local:
+👉 http://localhost:3000
 
 ## Requisitos Funcionais
 Referem-se às funcionalidades que o sistema deve executar.
