@@ -1,200 +1,122 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Product from '@/components/Product';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 
-export default function ProdutosPage() {
-  const [produtos, setProdutos] = useState([]);
+export default function ProdutoDetalhesPage() {
+  const { id } = useParams();
+  const router = useRouter();
+  const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const [categoria, setCategoria] = useState('');
-  const [minPreco, setMinPreco] = useState('');
-  const [maxPreco, setMaxPreco] = useState('');
-
-  // Adicionada a categoria "Acessórios"
-  const categoriasPermitidas = [
-    'Eletrônicos',
-    'Papelaria',
-    'Masculino Vestimenta',
-    'Feminino Vestimento',
-    'Acessórios',
-  ];
-
-  const buscarProdutos = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (categoria) params.append('categoria', categoria);
-      if (minPreco) params.append('minPreco', minPreco);
-      if (maxPreco) params.append('maxPreco', maxPreco);
-
-      const res = await fetch(`/api/anuncios?${params.toString()}`);
-      const data = await res.json();
-
-      if (data.status === 'success') {
-        let lista = data.data || [];
-
-        if (categoria) {
-          lista = lista.filter((p) => {
-            const catNome = typeof p.categoria === 'object' ? p.categoria?.nome : p.categoria;
-            return catNome?.toLowerCase() === categoria.toLowerCase();
-          });
-        }
-
-        if (minPreco) {
-          lista = lista.filter((p) => Number(p.preco) >= parseFloat(minPreco));
-        }
-
-        if (maxPreco) {
-          lista = lista.filter((p) => Number(p.preco) <= parseFloat(maxPreco));
-        }
-
-        setProdutos(lista);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar anúncios:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [imagemSelecionada, setImagemSelecionada] = useState(0);
 
   useEffect(() => {
-    buscarProdutos();
-  }, [categoria]);
+    async function fetchProduto() {
+      try {
+        const res = await fetch(`/api/anuncios/${id}`);
+        const data = await res.json();
 
-  const handleLimparFiltros = () => {
-    setCategoria('');
-    setMinPreco('');
-    setMaxPreco('');
-    fetch('/api/anuncios')
-      .then((res) => res.json())
-      .then((data) => setProdutos(data.data || []));
-  };
+        if (res.ok && data.status === 'success') {
+          setProduto(data.data);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar o produto:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  const temFiltroAtivo = categoria || minPreco || maxPreco;
-  const getNomeCat = (p) => (typeof p.categoria === 'object' ? p.categoria?.nome : p.categoria);
+    if (id) fetchProduto();
+  }, [id]);
+
+  if (loading) return <div className="p-8 text-center text-black">Carregando detalhes...</div>;
+  if (!produto) return <div className="p-8 text-center text-red-500">Produto não encontrado.</div>;
+
+  const imagens = produto.imagem_produto || [];
+  const nomeCategoria = typeof produto.categoria === 'object' ? produto.categoria?.nome : produto.categoria;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 text-black">
-      <h1 className="text-2xl font-bold mb-6 text-black">Mecanismo de Busca</h1>
+    <main className="max-w-5xl mx-auto p-6 text-black">
+      <button
+        onClick={() => router.back()}
+        className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-black text-sm font-medium rounded-lg transition"
+      >
+        ← Voltar
+      </button>
 
-      {/* Painel de Filtros */}
-      <div className="bg-white p-4 rounded-xl border shadow-sm mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      <div className="bg-white border rounded-2xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        {/* Galeria de Imagens */}
         <div>
-          <label className="block text-xs font-semibold uppercase text-black mb-1">
-            Categoria
-          </label>
-          <select
-            value={categoria}
-            onChange={(e) => setCategoria(e.target.value)}
-            className="w-full p-2.5 border rounded-lg text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Todas as categorias</option>
-            {categoriasPermitidas.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase text-black mb-1">
-            Preço Mínimo
-          </label>
-          <input
-            type="number"
-            placeholder="R$ 0"
-            value={minPreco}
-            onChange={(e) => setMinPreco(e.target.value)}
-            className="w-full p-2.5 border rounded-lg text-sm text-black"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase text-black mb-1">
-            Preço Máximo
-          </label>
-          <input
-            type="number"
-            placeholder="R$ 1000"
-            value={maxPreco}
-            onChange={(e) => setMaxPreco(e.target.value)}
-            className="w-full p-2.5 border rounded-lg text-sm text-black"
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            onClick={buscarProdutos}
-            className="flex-1 bg-blue-600 text-white font-medium py-2.5 rounded-lg hover:bg-blue-700 transition text-sm"
-          >
-            Filtrar
-          </button>
-          <button
-            onClick={handleLimparFiltros}
-            className="px-4 bg-gray-200 text-black font-medium rounded-lg hover:bg-gray-300 transition text-sm"
-          >
-            Limpar
-          </button>
-        </div>
-      </div>
-
-      {/* Exibição dos Resultados */}
-      {loading ? (
-        <p className="text-center text-black py-12">Filtrando produtos...</p>
-      ) : produtos.length === 0 ? (
-        <div className="text-center py-12 border rounded-xl bg-gray-50">
-          <p className="text-black font-medium">Nenhum produto encontrado com os filtros selecionados.</p>
-          <button
-            onClick={handleLimparFiltros}
-            className="mt-2 text-sm text-blue-600 underline font-semibold"
-          >
-            Limpar Filtros
-          </button>
-        </div>
-      ) : temFiltroAtivo ? (
-        <div>
-          <p className="text-sm text-black font-semibold mb-4">
-            Exibindo {produtos.length} {produtos.length === 1 ? 'resultado' : 'resultados'}:
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {produtos.map((produto) => (
-              <Product key={produto.id_produto} produto={produto} />
-            ))}
+          <div className="h-80 w-full bg-gray-100 rounded-xl overflow-hidden mb-4 border">
+            {imagens.length > 0 ? (
+              <img
+                src={imagens[imagemSelecionada]?.url_imagem}
+                alt={produto.titulo}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-black">Sem imagens</div>
+            )}
           </div>
+
+          {imagens.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto">
+              {imagens.map((img, idx) => (
+                <button
+                  key={img.id_imagem || idx}
+                  onClick={() => setImagemSelecionada(idx)}
+                  className={`w-16 h-16 rounded-lg overflow-hidden border-2 ${
+                    imagemSelecionada === idx ? 'border-blue-600' : 'border-transparent'
+                  }`}
+                >
+                  <img src={img.url_imagem} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-      ) : (
-        /* Seções separadas por todas as 5 categorias */
-        <div className="space-y-10">
-          {categoriasPermitidas.map((catNome) => {
-            const produtosDaCategoria = produtos.filter(
-              (p) => getNomeCat(p)?.toLowerCase() === catNome.toLowerCase()
-            );
 
-            if (produtosDaCategoria.length === 0) return null;
+        {/* Informações Detalhadas */}
+        <div className="flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              {/* Exibição Destacada da Categoria */}
+              <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 bg-black text-white rounded-full">
+                Categoria: {nomeCategoria || 'Não definida'}
+              </span>
+              <span className="text-xs text-black">
+                {new Date(produto.data_anuncio).toLocaleDateString('pt-BR')}
+              </span>
+            </div>
 
-            return (
-              <section key={catNome} className="border-t pt-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-bold text-black border-l-4 border-blue-600 pl-3">
-                    {catNome}
-                  </h2>
-                  <span className="text-xs text-black font-medium bg-gray-200 px-2 py-1 rounded-full">
-                    {produtosDaCategoria.length} {produtosDaCategoria.length === 1 ? 'item' : 'itens'}
-                  </span>
-                </div>
+            <h1 className="text-2xl font-bold text-black mt-2">{produto.titulo}</h1>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {produtosDaCategoria.map((produto) => (
-                    <Product key={produto.id_produto} produto={produto} />
-                  ))}
-                </div>
-              </section>
-            );
-          })}
+            <div className="text-3xl font-extrabold text-emerald-600 my-4">
+              {produto.eh_doacao ? 'Gratuito (Doação)' : `R$ ${Number(produto.preco).toFixed(2)}`}
+            </div>
+
+            {produto.profiles && (
+              <div className="bg-gray-50 p-3 rounded-lg border my-4 text-xs text-black">
+                <p><strong>Anunciado por:</strong> {produto.profiles.nome}</p>
+                <p><strong>Contato:</strong> {produto.profiles.email}</p>
+              </div>
+            )}
+
+            <div className="border-t pt-4">
+              <h2 className="text-sm font-semibold text-black mb-2 uppercase tracking-wide">Descrição</h2>
+              <p className="text-black text-sm whitespace-pre-line leading-relaxed">
+                {produto.descricao}
+              </p>
+            </div>
+          </div>
+
+          <button className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition">
+            Entrar em Contato com Vendedor
+          </button>
         </div>
-      )}
-    </div>
+
+      </div>
+    </main>
   );
 }
